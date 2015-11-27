@@ -141,9 +141,14 @@ function(nanopb_generate SRCS HDRS)
     get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
     get_filename_component(FIL_WE ${FIL} NAME_WE)
 
+    # Get relative path from current source dir, this is used to 
+    # place the generated header file in the same directory structure
+    # as the proto file.
+    file(RELATIVE_PATH FIL_REL_SOURCE ${CMAKE_CURRENT_SOURCE_DIR} ${ABS_FIL})
+    get_filename_component(FIL_DIR_REL ${FIL_REL_SOURCE} DIRECTORY)
+
     # Produced absoulte path without extension
     STRING(REGEX REPLACE "[.]proto" "" ABS_FIL_WO ${ABS_FIL} )
-    
     SET(NANOPB_OPTIONS_FILE ${ABS_FIL_WO}.options)
 
     set(NANOPB_OPTIONS)
@@ -156,21 +161,21 @@ function(nanopb_generate SRCS HDRS)
 
     add_custom_command(
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb"
+             "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.c"
+             "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.h"
+      # run protoc
       COMMAND  ${PROTOBUF_PROTOC_EXECUTABLE}
       ARGS -I${GENERATOR_PATH} -I${GENERATOR_CORE_DIR}
         -I${CMAKE_CURRENT_BINARY_DIR} ${_nanobp_include_path}
         -o${FIL_WE}.pb ${ABS_FIL}
-      DEPENDS ${ABS_FIL} ${GENERATOR_CORE_PYTHON_SRC} ${NANOPB_OPTIONS_FILE}
-      COMMENT "Running C++ protocol buffer compiler on ${FIL}"
-      VERBATIM )
-
-    add_custom_command(
-      OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.c"
-             "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.h"
+      # Run nanopb generator
       COMMAND ${PYTHON_EXECUTABLE}
       ARGS ${NANOPB_GENERATOR_EXECUTABLE} ${FIL_WE}.pb ${NANOPB_OPTIONS}
-      DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb"
-      COMMENT "Running nanopb generator on ${FIL_WE}.pb"
+      # Copy header to correct folder
+      COMMAND ${CMAKE_COMMAND}
+      ARGS -E copy "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.h" "${CMAKE_CURRENT_BINARY_DIR}/${FIL_DIR_REL}/${FIL_WE}.pb.h"
+      DEPENDS ${ABS_FIL} ${GENERATOR_CORE_PYTHON_SRC} ${NANOPB_OPTIONS_FILE}
+      COMMENT "Running C++ protocol buffer compiler on ${FIL} and nanopb generator on ${FIL_WE}.pb"
       VERBATIM )
   endforeach()
 
