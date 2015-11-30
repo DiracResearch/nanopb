@@ -156,6 +156,8 @@ function(nanopb_generate TARGET SRCS HDRS)
     set(NANOPB_OPTIONS)
     if(EXISTS ${NANOPB_OPTIONS_FILE})
         set(NANOPB_OPTIONS "-f" ${NANOPB_OPTIONS_FILE})
+    else()
+        set(NANOPB_OPTIONS_FILE)
     endif()
 
     list(APPEND ${SRCS} "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.c")
