@@ -12,14 +12,8 @@ find_program(PROTOBUF_PROTOC_EXECUTABLE
 )
 mark_as_advanced(PROTOBUF_PROTOC_EXECUTABLE)
 
-# Find nanopb generator source dir
-find_path(NANOPB_GENERATOR_SOURCE_DIR
-    NAMES nanopb_generator.py
-    DOC "nanopb generator source"
-    PATHS
-    ${CMAKE_CURRENT_SOURCE_DIR}/generator
-)
-mark_as_advanced(NANOPB_GENERATOR_SOURCE_DIR)
+# Set nanopb generator source dir
+set(NANOPB_GENERATOR_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/generator)
 
 find_package(PythonInterp REQUIRED)
 
