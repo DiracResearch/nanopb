@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.0)
 
 project(nanopb C)
 
+# Set nanopb generator source dir
+set(NANOPB_GENERATOR_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generator")
+
 include(cmake/nanopb_generate.cmake)
 
 # Find the protoc Executable
@@ -11,9 +14,6 @@ find_program(PROTOBUF_PROTOC_EXECUTABLE
     DOC "The Google Protocol Buffers Compiler"
 )
 mark_as_advanced(PROTOBUF_PROTOC_EXECUTABLE)
-
-# Set nanopb generator source dir
-set(NANOPB_GENERATOR_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/generator)
 
 find_package(PythonInterp REQUIRED)
 
