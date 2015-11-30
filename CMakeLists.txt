@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(nanopb C)
 
 # Set nanopb generator source dir
-set(NANOPB_GENERATOR_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generator")
+set(NANOPB_GENERATOR_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/generator" CACHE INTERNAL "")
 
 include(cmake/nanopb_generate.cmake)
 
