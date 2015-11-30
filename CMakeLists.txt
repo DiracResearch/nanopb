@@ -7,6 +7,7 @@ include(cmake/nanopb_generate.cmake)
 # Find the protoc Executable
 find_program(PROTOBUF_PROTOC_EXECUTABLE
     NAMES protoc
+    NO_CMAKE_FIND_ROOT_PATH
     DOC "The Google Protocol Buffers Compiler"
 )
 mark_as_advanced(PROTOBUF_PROTOC_EXECUTABLE)
