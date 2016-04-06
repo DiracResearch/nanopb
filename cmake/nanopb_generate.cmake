@@ -168,18 +168,21 @@ function(nanopb_generate TARGET SRCS HDRS)
       OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb"
              "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.c"
              "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb.h"
-             "${CMAKE_CURRENT_BINARY_DIR}/nano_pb_temp_script.cmake"
+             "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}_nano_pb_temp_script.cmake"
       # create a temporary script, this is needed to get the spaces between arguments to be 
       # corretly added. Seems obscure but this is the best way I have managed to do it...
       COMMAND ${CMAKE_COMMAND}
-      ARGS -E echo "execute_process(COMMAND \${ARG_EXE} \${ARG1} \${ARG2})" > nano_pb_temp_script.cmake
+      ARGS -E echo "execute_process(COMMAND \${ARG_EXE} \${ARG1} \${ARG2})" > ${FIL_WE}_nano_pb_temp_script.cmake
+      # Make sure that output directory exists to avoid warning from protoc
+      COMMAND ${CMAKE_COMMAND}
+      ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/${FIL_DIR_REL}"
       # run protoc through the temporary script to get spaces to appear correctly
       COMMAND ${CMAKE_COMMAND}
       ARGS 
          "-DARG1=-I$<JOIN:$<TARGET_PROPERTY:${TARGET},INCLUDE_DIRECTORIES>,$<SEMICOLON>-I>"
          "-DARG2=-I${GENERATOR_PATH};-I${GENERATOR_CORE_DIR};-I${CMAKE_CURRENT_BINARY_DIR};${_nanobp_include_path};-o${FIL_WE}.pb;${ABS_FIL}"
          "-DARG_EXE=${PROTOBUF_PROTOC_EXECUTABLE}"
-         -P nano_pb_temp_script.cmake
+         -P ${FIL_WE}_nano_pb_temp_script.cmake
       # Run nanopb generator
       COMMAND ${PYTHON_EXECUTABLE}
       ARGS ${NANOPB_GENERATOR_EXECUTABLE} ${FIL_WE}.pb ${NANOPB_OPTIONS}
