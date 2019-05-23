@@ -1235,7 +1235,7 @@ static bool checkreturn pb_dec_bytes(pb_istream_t *stream, const pb_field_t *fie
     if (!pb_decode_varint32(stream, &size))
         return false;
     
-    if (size > PB_SIZE_MAX)
+    if (size > (PB_SIZE_MAX))
         PB_RETURN_ERROR(stream, "bytes overflow");
     
     alloc_size = PB_BYTES_ARRAY_T_ALLOCSIZE(size);
