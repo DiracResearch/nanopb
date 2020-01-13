@@ -405,6 +405,12 @@ class Field:
                 inner_init = str(self.default) + 'ull'
             elif self.pbtype in ['SFIXED64', 'INT64']:
                 inner_init = str(self.default) + 'll'
+            elif self.pbtype == 'FLOAT':
+                inner_init = str(self.default)
+                if not '.' in inner_init:
+                    inner_init += '.0f'
+                else:
+                    inner_init += 'f'
             else:
                 inner_init = str(self.default)
 
